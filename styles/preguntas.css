@@ -1,0 +1,27 @@
+div#maquetar{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: stretch;
+}
+
+div#maquetar div#form{
+    width: 40%;
+}
+
+div#maquetar div#list{
+    width: 40%;
+    display: table;
+}
+
+div#maquetar div#list section{
+    display: table-row;
+}
+
+div#maquetar div#list section p{
+    display: table-cell;
+}
+
+div#maquetar div#list section hr{
+    display: table-cell;
+}

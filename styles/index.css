@@ -1,0 +1,11 @@
+@charset "utf-8";
+
+body{
+    width: 30%;
+    margin: 0 auto;
+    text-align: center;
+    /*width: 30%;
+    position: absolute;
+    top: 45%;
+    left: 34%;*/
+}

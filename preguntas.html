@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Bienvenido</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="styles/general.css" />
+        <link rel="stylesheet" type="text/css" href="styles/preguntas.css" />
+    </head>
+    <body>
+        <div id="maquetar">
+            <div id="form">
+                <form id="formpreguntas" name="formpreguntas">
+                    Pregunta: <input type="text" id="pregunta" name="pregunta" required />
+                    <br>
+                    <input type="radio" id="verdadero" name="respuesta" value="verdadero" />
+                    <label for="verdadero">Verdadero</label>
+                    <input type="radio" id="falso" name="respuesta" value="falso" />
+                    <label for="falso">Falso</label>
+                    <br>
+                    Puntuación: <input type="number" id="puntuacion" name="puntuacion" min="1" max="9" required />
+                    <br>
+                    <input type="submit" id="grabar" name="grabar" value="Grabar" />
+                </form>
+                <br>
+                <a href="usuario.html">Atrás</a>
+            </div>
+            <div id="list">
+                <section>
+                    <p>Pregunta</p>
+                    <p>Respuesta</p>
+                    <p>Puntuación</p>
+                    <p>Estado</p>
+                </section>
+                <section>
+                    <hr>
+                    <hr>
+                    <hr>
+                    <hr>
+                </section>
+                <section>
+                    <p>Pregunta 1</p>
+                    <p>Verdadero</p>
+                    <p>8</p>
+                    <p>OK</p>
+                </section>
+                <section>
+                    <p>Pregunta 2</p>
+                    <p>Falso</p>
+                    <p>3</p>
+                    <p>OK</p>
+                </section>
+                <section>
+                    <p>Pregunta 3</p>
+                    <p>Falso</p>
+                    <p>8</p>
+                    <p>Guardando...</p>
+                </section>
+            </div>
+        </div>
+    </body>
+</html>
