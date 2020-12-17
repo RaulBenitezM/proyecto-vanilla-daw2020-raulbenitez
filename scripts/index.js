@@ -1,5 +1,3 @@
-import Cookies from 'js-cookie';
-
 /**
  * Función para cambiar el código HTML del index para poderse loguear
  */
@@ -10,6 +8,44 @@ function mostrarLogin() {
     '<p>Usuario:</p>' +
     '<p><input type="text" id="usuario" name="usuario" /></p>';
 }
+
+// PRUEBAS PARA EL JSON CUESTIONARIO
+
+let fecha = new Date();
+
+let cuestionario = [
+  {
+    correo: 'raul@gmail.com',
+    fecha: fecha.toUTCString(),
+    preguntas: [
+      {
+        titulo: 'Pregunta 1',
+        respuesta: true,
+        puntuacion: 2,
+      },
+    ],
+  },
+];
+
+console.log(JSON.stringify(cuestionario));
+
+let persona = {
+  correo: 'raul2@gmail.com',
+  fecha: fecha.toUTCString(),
+  preguntas: [
+    {
+      titulo: 'Pregunta 1',
+      respuesta: false,
+      puntuacion: 4,
+    },
+  ],
+};
+
+cuestionario.push(persona);
+
+console.log(JSON.stringify(cuestionario));
+
+// FIN DE PRUEBA PARA EL JSON CUESTIONARIO
 
 //A los 5 segundos de cargar la página saldrá el Login (a menos que se pulse antes Ctrl + F10)
 let temp = setTimeout(() => mostrarLogin(), 5000);
@@ -27,11 +63,11 @@ window.addEventListener('blur', (event) => {
 
   let pattern = /\S+@\S+\.\S+/;
   if (pattern.test(inputUsuario.value)) {
-    let fecha = new Date();
-    console.log(fecha.getHours());
-    console.log(fecha.getMinutes());
-    console.log(fecha.getSeconds());
-    //Cookies.set('usuario', );
+    //let fecha = new Date();
+    //console.log(fecha.getHours());
+    //console.log(fecha.getMinutes());
+    //console.log(fecha.getSeconds());
+    //console.log(cookie);
     //location.href = 'usuario.html';
   } else {
     let secError = document.getElementById('error');
