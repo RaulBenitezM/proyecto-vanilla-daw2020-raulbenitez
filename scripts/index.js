@@ -28,12 +28,27 @@ window.addEventListener('blur', (event) => {
   if (pattern.test(inputUsuario.value)) {
     let fecha = new Date();
 
-    let cuestionario = [
+    let cuestionario = JSON.parse(Cookies.get('cuestionario'));
+
+    if(cuestionario.correo == inputUsuario.value){
+      cuestionario.fechaHora = {
+        day: fecha.getDate(),
+          //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
+          month: fecha.getMonth() + 1,
+          year: fecha.getFullYear(),
+          hour: fecha.getHours(),
+          minute: fecha.getMinutes(),
+          second: fecha.getSeconds(),
+        }
+    }
+
+    let cuestionarioJson = //[
       {
         correo: inputUsuario.value,
         fechaHora: {
-          day: fecha.getDay(),
-          month: fecha.getMonth(),
+          day: fecha.getDate(),
+          //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
+          month: fecha.getMonth() + 1,
           year: fecha.getFullYear(),
           hour: fecha.getHours(),
           minute: fecha.getMinutes(),
@@ -41,9 +56,10 @@ window.addEventListener('blur', (event) => {
         },
         preguntas: [],
       },
-    ];
+    //]
+    ;
 
-    strCuestionario = JSON.stringify(cuestionario);
+    strCuestionario = JSON.stringify(cuestionarioJson);
 
     Cookies.set('cuestionario', strCuestionario, { expires: 7 });
 
