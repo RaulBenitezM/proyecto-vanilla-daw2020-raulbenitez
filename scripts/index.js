@@ -28,40 +28,29 @@ window.addEventListener('blur', (event) => {
   if (pattern.test(inputUsuario.value)) {
     let fecha = new Date();
 
-    let cuestionario = JSON.parse(Cookies.get('cuestionario'));
+    if (!Cookies.get('cuestionario')) {
+      let cuestionarioJson =
+        //[
+        {
+          correo: inputUsuario.value,
+          fechaHora: {
+            day: fecha.getDate(),
+            //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
+            month: fecha.getMonth() + 1,
+            year: fecha.getFullYear(),
+            hour: fecha.getHours(),
+            minute: fecha.getMinutes(),
+            second: fecha.getSeconds(),
+          },
+          preguntas: [],
+        };
+      //]
 
-    if(cuestionario.correo == inputUsuario.value){
-      cuestionario.fechaHora = {
-        day: fecha.getDate(),
-          //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
-          month: fecha.getMonth() + 1,
-          year: fecha.getFullYear(),
-          hour: fecha.getHours(),
-          minute: fecha.getMinutes(),
-          second: fecha.getSeconds(),
-        }
+      strCuestionario = JSON.stringify(cuestionarioJson);
+
+      Cookies.set('cuestionario', strCuestionario, { expires: 7 });
+    } else {
     }
-
-    let cuestionarioJson = //[
-      {
-        correo: inputUsuario.value,
-        fechaHora: {
-          day: fecha.getDate(),
-          //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
-          month: fecha.getMonth() + 1,
-          year: fecha.getFullYear(),
-          hour: fecha.getHours(),
-          minute: fecha.getMinutes(),
-          second: fecha.getSeconds(),
-        },
-        preguntas: [],
-      },
-    //]
-    ;
-
-    strCuestionario = JSON.stringify(cuestionarioJson);
-
-    Cookies.set('cuestionario', strCuestionario, { expires: 7 });
 
     location.href = 'usuario.html';
   } else {
@@ -74,4 +63,18 @@ window.addEventListener('blur', (event) => {
       inputUsuario.select();
     }, 0);
   }
+
+  /*let cuestionario = JSON.parse(Cookies.get('cuestionario'));
+
+    if (cuestionario.correo == inputUsuario.value) {
+      cuestionario.fechaHora = {
+        day: fecha.getDate(),
+        //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
+        month: fecha.getMonth() + 1,
+        year: fecha.getFullYear(),
+        hour: fecha.getHours(),
+        minute: fecha.getMinutes(),
+        second: fecha.getSeconds(),
+      };
+    }*/
 });
