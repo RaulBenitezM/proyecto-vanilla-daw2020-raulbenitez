@@ -100,8 +100,6 @@ async function agregarPregunta(usuarioActual) {
       pregunta.estado = 'OK';
 
       usuarioActual.preguntas.push(pregunta);
-
-      //TO-DO Problema no deja crear un string de usuarioActual
       let strUsuarioActual = JSON.stringify(usuarioActual);
 
       Cookies.set('usuarioActual', strUsuarioActual);
