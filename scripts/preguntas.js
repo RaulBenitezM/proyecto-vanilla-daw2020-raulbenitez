@@ -57,11 +57,15 @@ function mostrarPregunta(pregunta) {
   return p;
 }
 
+/**
+ * Se agrega la pregunta al usuario actual y sus cookies correspondientes
+ * @param {Object} usuarioActual Usuario al que está logueado a actualmente
+ */
 async function agregarPregunta(usuarioActual) {
   //Deshabilito el botón atrás cuando se está agregando la pregunta
   btnAtras.setAttribute('disabled', true);
 
-  //Recojo ela información del formulario para después guardarla en un objeto "pregunta"
+  //Recojo la información del formulario para después guardarla en un objeto "pregunta"
   let titulo = document.getElementById('pregunta').value;
   let respuesta;
   for (let radio of document.getElementsByName('respuesta')) {
