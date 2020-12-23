@@ -1,22 +1,23 @@
-//TO-DO Poner comentarios
-let cuestionario = JSON.parse(Cookies.get('cuestionario'));
+let usuarioActual = JSON.parse(Cookies.get('usuarioActual'));
+
+//Muestro por pantalla la información del usuario que hemos accedido
 
 let p1 = document.getElementById('p1');
 
 let p2 = document.getElementById('p2');
 
-p1.innerHTML = 'Hola ' + cuestionario.correo;
+p1.innerHTML = 'Hola ' + usuarioActual.correo;
 
 p2.innerHTML =
   'La última vez que entraste fue el ' +
-  cuestionario.fechaHora.day +
+  usuarioActual.fechaHora.day +
   '-' +
-  cuestionario.fechaHora.month +
+  usuarioActual.fechaHora.month +
   '-' +
-  cuestionario.fechaHora.year +
+  usuarioActual.fechaHora.year +
   ' a las ' +
-  cuestionario.fechaHora.hour +
+  usuarioActual.fechaHora.hour +
   ':' +
-  cuestionario.fechaHora.minute +
+  usuarioActual.fechaHora.minute +
   ':' +
-  cuestionario.fechaHora.second;
+  usuarioActual.fechaHora.second;

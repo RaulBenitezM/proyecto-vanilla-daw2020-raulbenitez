@@ -1,3 +1,5 @@
+import { crearPrimerUsuario, selectUsuario, crearUsuario } from './general.js';
+
 /**
  * Función para cambiar el código HTML del index para poderse loguear
  */
@@ -7,6 +9,8 @@ function mostrarLogin() {
   principal.innerHTML =
     '<p>Usuario:</p>' +
     '<p><input type="text" id="usuario" name="usuario" /></p>';
+
+  comprobar();
 }
 
 //A los 5 segundos de cargar la página saldrá el Login (a menos que se pulse antes Ctrl + F10)
@@ -19,62 +23,52 @@ window.addEventListener('keyup', (letra) => {
   }
 });
 
-//Cuando se quite el foco del input de email se comprobará si es correcto o no
-window.addEventListener('blur', (event) => {
+/**
+ * Esta funcion añade un EventListener para que cuando se quite el foco del email se compruebe si es correcto, si fuera así se crea el usuario en la cookie o lo recoje si ya existe
+ * y redirige a la siguiente pantalla
+ */
+function comprobar() {
   let inputUsuario = document.getElementById('usuario');
 
-  let pattern = /\S+@\S+\.\S+/;
+  //Cuando se quite el foco del input de email se comprobará si es correcto o no
+  inputUsuario.addEventListener('blur', (event) => {
+    let pattern = /\S+@\S+\.\S+/;
 
-  if (pattern.test(inputUsuario.value)) {
     let fecha = new Date();
 
-    if (!Cookies.get('cuestionario')) {
-      let cuestionarioJson =
-        //[
-        {
-          correo: inputUsuario.value,
-          fechaHora: {
-            day: fecha.getDate(),
-            //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
-            month: fecha.getMonth() + 1,
-            year: fecha.getFullYear(),
-            hour: fecha.getHours(),
-            minute: fecha.getMinutes(),
-            second: fecha.getSeconds(),
-          },
-          preguntas: [],
-        };
-      //]
+    //Si el patrón del correo es correcto se comprueba si ya existe la cookie "cuestionario" y si no es así se crea. Si el correo al que intentamos acceder no es correcto, sale un mensaje de error.
+    if (pattern.test(inputUsuario.value)) {
+      if (!Cookies.get('cuestionario')) {
+        crearPrimerUsuario(inputUsuario, fecha);
 
-      strCuestionario = JSON.stringify(cuestionarioJson);
+        //Si sí existe la cookie anterior, se comprueba si el usuario que intentamos acceder está creado, si es así solo recoje el usuario y actualiza su fecha de la última vez iniciado
+      } else {
+        let cuestionario = JSON.parse(Cookies.get('cuestionario'));
 
-      Cookies.set('cuestionario', strCuestionario, { expires: 7 });
+        let existe = false;
+
+        for (usuario of cuestionario) {
+          if (usuario.correo == inputUsuario.value) {
+            selectUsuario(usuario, cuestionario, fecha);
+            existe = true;
+          }
+        }
+
+        //Si finalmente el usuario al que accedemos no existe, se crea
+        if (!existe) {
+          crearUsuario(inputUsuario, cuestionario, fecha);
+        }
+      }
+
+      location.href = 'usuario.html';
     } else {
+      let secError = document.getElementById('error');
+      secError.innerHTML = '<p>El e-mail es incorrecto!</p>';
+
+      setTimeout(() => {
+        inputUsuario.select();
+        inputUsuario.focus();
+      }, 0);
     }
-
-    location.href = 'usuario.html';
-  } else {
-    let secError = document.getElementById('error');
-    secError.innerHTML = '<p>El e-mail es incorrecto!</p>';
-
-    //TO-DO No funciona el foco al ser incorrecto
-    setTimeout(() => {
-      inputUsuario.focus();
-      inputUsuario.select();
-    }, 0);
-  }
-
-  /*let cuestionario = JSON.parse(Cookies.get('cuestionario'));
-
-    if (cuestionario.correo == inputUsuario.value) {
-      cuestionario.fechaHora = {
-        day: fecha.getDate(),
-        //Se le suma 1 al mes ya que lo que te devuelve la función getMonth() es un numero de 0-11
-        month: fecha.getMonth() + 1,
-        year: fecha.getFullYear(),
-        hour: fecha.getHours(),
-        minute: fecha.getMinutes(),
-        second: fecha.getSeconds(),
-      };
-    }*/
-});
+  });
+}
