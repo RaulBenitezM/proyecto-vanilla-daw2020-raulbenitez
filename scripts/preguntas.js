@@ -1,35 +1,35 @@
-import { temporizador } from './general.js';
+import {
+  guardarCuestionario,
+  guardarUsuarioActual,
+  temporizador,
+} from './general.js';
 
 /**
  * Dependiendo de lo que se le pase como parámetro, habrá una carga de 5 segundos antes de que aparezcan las preguntas o no
- * @param {boolean} retraso
+ * @param {boolean} retraso Si es verdadero hay un retraso al cargar las preguntas, si es falso no
  */
-async function inicio(retraso) {
+async function inicio(retraso = false, callback) {
   //Si "retraso" es "true" deshabilito el botón de grabar y muestro por pantalla que se están cargando las preguntas.
   //Cuando se termine de cargar, muestro todas las preguntas y habilito de nuevo el botón de grabar.
   if (retraso) {
     btnGrabar.setAttribute('disabled', true);
 
     let section = document.createElement('section');
-    let p = document.createElement('p');
-    p.innerHTML = 'Cargando...';
-    section.appendChild(p);
+    section.innerHTML = 'Cargando preguntas...';
     list.appendChild(section);
 
-    let promesaInicio = temporizador(5000);
+    let tempInicio = callback(5000);
 
-    await promesaInicio
+    await tempInicio
       .then(() => {
         list.removeChild(section);
 
         for (let pregunta of usuarioActual.preguntas) {
           mostrarPregunta(pregunta);
         }
-
-        btnGrabar.removeAttribute('disabled');
       })
       .catch(() => {
-        console.error('Ha habido un error grave!');
+        section.innerHTML = '¡Ha habido un error al mostrar las preguntas!';
       });
   } else {
     for (let pregunta of usuarioActual.preguntas) {
@@ -40,7 +40,8 @@ async function inicio(retraso) {
 
 /**
  * Muestra en el documento HTML los valores de cada apartado de la pregunta pasada
- * @param {Object} pregunta
+ * @param {Object} pregunta Pregunta que se quiere mostrar en el documento HTML
+ * @returns {HTMLParagraphElement} Párrafo para poder acceder a este y poder cambiar su estado a "OK"
  */
 function mostrarPregunta(pregunta) {
   //Utilizo DIV, SECTION y P ya que me viene mejor a la hora de maquetar el HTML
@@ -53,24 +54,16 @@ function mostrarPregunta(pregunta) {
   }
 
   list.appendChild(section);
-
-  //Devuelvo el último párrafo (el del estado) para que se pueda acceder y cambiar su contenido a "OK" luego de guardarse (si se necesita hacer)
   return p;
 }
 
-/**
- * Se agregan los valores del formulario a una pregunta, en la qual, pasados 5 segundos, se guardará en la cookie "usuarioActual" y en el usuario que estamos ahora dentro de la cookie "cuestionario"
- * @param {*} usuarioActual
- */
 async function agregarPregunta(usuarioActual) {
-  //Deshabilito el botón atrás
+  //Deshabilito el botón atrás cuando se está agregando la pregunta
   btnAtras.setAttribute('disabled', true);
 
-  //Recojo la información del formulario para después guardarla en un objeto "pregunta"
+  //Recojo ela información del formulario para después guardarla en un objeto "pregunta"
   let titulo = document.getElementById('pregunta').value;
-
   let respuesta;
-
   for (let radio of document.getElementsByName('respuesta')) {
     if (radio.checked) respuesta = radio.value;
   }
@@ -84,35 +77,30 @@ async function agregarPregunta(usuarioActual) {
     estado: 'Guardando...',
   };
 
-  //Muestro la pregunta en el documento HTML con el estado "Guardando..."
+  //Muestro la pregunta en el document HTML con el estado "Guardando..."
   let p = mostrarPregunta(pregunta);
 
-  //Cuando se borre el formulario desactivo también el botón de grabar
-  document.getElementById('formpreguntas').reset();
+  //Cuando se borre el formulario desactivo también el botón "Grabar"
+  form.reset();
   btnGrabar.setAttribute('disabled', true);
 
-  let promesa = temporizador(5000);
+  let temp = temporizador(5000);
 
   //Si se han pasado los 5 segundos del temporizador correctamente, el estado de la pregunta pasa a ser "OK", agrego la pregunta al usuario actual y a sus respectivas cookies
   //y muestro por pantalla que se ha guardado la pregunta correctamente
-  await promesa
+  await temp
     .then(() => {
       pregunta.estado = 'OK';
 
       usuarioActual.preguntas.push(pregunta);
-      let strUsuarioActual = JSON.stringify(usuarioActual);
-
-      Cookies.set('usuarioActual', strUsuarioActual);
+      guardarUsuarioActual(usuarioActual);
 
       let cuestionarioGeneral = JSON.parse(Cookies.get('cuestionario'));
 
       for (let usuario of cuestionarioGeneral) {
         if (usuarioActual.correo == usuario.correo) {
           usuario.preguntas.push(pregunta);
-
-          let strCuestionarioGeneral = JSON.stringify(cuestionarioGeneral);
-
-          Cookies.set('cuestionario', strCuestionarioGeneral, { expires: 7 });
+          guardarCuestionario(cuestionarioGeneral);
         }
       }
 
@@ -131,9 +119,8 @@ async function agregarPregunta(usuarioActual) {
 
   //Cada vez que se termina de guardar una pregunta compruebo que la última pregunta añadida tenga el estado "OK". Si lo tiene, el botón de atrás se habilitará de nuevo.
   //Si no es así, el botón no se habilitará.
-  if (pEstadoLastSection.textContent === 'OK') {
+  if (pEstadoLastSection.textContent === 'OK')
     btnAtras.removeAttribute('disabled');
-  }
 }
 
 /**
@@ -161,20 +148,19 @@ function comprobarInputs() {
     inputPuntuacion.value != ''
   ) {
     btnGrabar.removeAttribute('disabled');
-  } else {
-    btnGrabar.setAttribute('disabled', true);
   }
 }
 
-//Inicializo estas variable al inicio para utilizarlas luego
+//Inicializo estas variables al inicio para utilizarlas luego
 let btnGrabar = document.getElementById('grabar');
 let btnAtras = document.getElementById('atras');
 let list = document.getElementById('list');
 let usuarioActual = JSON.parse(Cookies.get('usuarioActual'));
+let form = document.getElementById('formpreguntas');
 
 window.addEventListener('load', () => {
   btnGrabar.setAttribute('disabled', true);
-  inicio(false);
+  inicio(true, temporizador);
 });
 
 window.addEventListener('submit', (event) => {
@@ -182,7 +168,5 @@ window.addEventListener('submit', (event) => {
 
   agregarPregunta(usuarioActual);
 });
-
-let form = document.getElementById('formpreguntas');
 
 form.addEventListener('change', () => comprobarInputs());
